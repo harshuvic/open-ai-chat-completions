@@ -1,9 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export interface IDbMessage {
     thread_id: string;
     role: string;
-    content: string;
+    content?: string;
+    tool_call_id?: string;
+    tool_calls?: any[];
     url?: string;
     created_at?: Date;
 }
@@ -11,7 +13,9 @@ export interface IDbMessage {
 const messageSchema = new mongoose.Schema<IDbMessage>({
     thread_id: { type: String, required: true },
     role: { type: String, required: true },
-    content: { type: String, required: true },
+    content: { type: String },
+    tool_call_id: { type: String },
+    tool_calls: { type: Schema.Types.Mixed },
     url: { type: String },
     created_at: { type: Date, default: Date.now },
 });

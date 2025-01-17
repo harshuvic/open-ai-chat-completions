@@ -5,6 +5,7 @@ import { body, validationResult } from 'express-validator';
 import { v4 as uuidv4 } from 'uuid';
 import { sendMessage } from './services/openai.service';
 import { errorHandler } from './utils/error-handler';
+import { connectDb } from './services/db.service';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +31,11 @@ app.post('/chat', [body('message').notEmpty(), body('thread_id').notEmpty()], as
     const data: { thread_id: string; message: { text: string; url?: string } } = req.body;
     const response = await sendMessage(data.thread_id, data.message);
     return res.json({ response });
+});
+
+connectDb().catch(err => {
+    console.error('Error connecting to the database', err);
+    process.exit(1);
 });
 
 app.use(errorHandler);
